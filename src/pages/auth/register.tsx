@@ -160,7 +160,7 @@ function Register() {
 
       toast.success("🎉 Registration successful! Please verify your email.");
       setTimeout(() => {
-        navigate("/auth/verify", { state: { email: data.email } });
+        navigate("/verify", { state: { email: data.email } });
       }, 1500);
     } catch (error: any) {
       toast.error(error?.data?.message || "Registration failed.");
@@ -286,223 +286,233 @@ function Register() {
             {currentStep === 3 && "Almost there! Add some optional details"}
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <AnimatePresence mode="wait">
-              {currentStep === 1 && (
-                <motion.div
-                  key="step1"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                >
-                  <InputField
-                    label="First Name"
-                    icon={<FaUser className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("firstname")}
-                    error={errors.firstname?.message}
-                    placeholder="Enter your first name"
-                  />
-                  <InputField
-                    label="Last Name"
-                    icon={<FaUser className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("lastname")}
-                    error={errors.lastname?.message}
-                    placeholder="Enter your last name"
-                  />
-                  <InputField
-                    label="Email"
-                    icon={<FaEnvelope className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("email")}
-                    error={errors.email?.message}
-                    placeholder="your.email@example.com"
-                    colSpan={2}
-                  />
-                </motion.div>
-              )}
 
-              {currentStep === 2 && (
-                <motion.div
-                  key="step2"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="space-y-6"
-                >
-                  <div>
-                    <InputField
-                      label="Password"
-                      type={showPassword ? "text" : "password"}
-                      icon={<FaLock className="h-5 w-5 text-gray-400" />}
-                      fieldProps={register("password")}
-                      error={errors.password?.message}
-                      placeholder="Create a strong password"
-                      trailingIcon={
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                        >
-                          {showPassword ? (
-                            <FaEyeSlash className="h-5 w-5 text-gray-400" />
-                          ) : (
-                            <FaEye className="h-5 w-5 text-gray-400" />
-                          )}
-                        </button>
-                      }
-                    />
-                    <PasswordStrength password={watchedPassword} />
-                  </div>
 
-                  <InputField
-                    label="Confirm Password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    icon={<FaShieldAlt className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("confirmPassword")}
-                    error={errors.confirmPassword?.message}
-                    placeholder="Confirm your password"
-                    trailingIcon={
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                      >
-                        {showConfirmPassword ? (
-                          <FaEyeSlash className="h-5 w-5 text-gray-400" />
-                        ) : (
-                          <FaEye className="h-5 w-5 text-gray-400" />
-                        )}
-                      </button>
-                    }
-                  />
+         <form
+  onSubmit={(e) => {
+    e.preventDefault();
+    if (currentStep < 3) {
+      // 🔹 Only go to the next step
+      handleNext();
+    } else {
+      // 🔹 On the last step, actually submit
+      handleSubmit(onSubmit)(e);
+    }
+  }}
+>
+  <AnimatePresence mode="wait">
+    {currentStep === 1 && (
+      <motion.div
+        key="step1"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <InputField
+          label="First Name"
+          icon={<FaUser className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("firstname")}
+          error={errors.firstname?.message}
+          placeholder="Enter your first name"
+        />
+        <InputField
+          label="Last Name"
+          icon={<FaUser className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("lastname")}
+          error={errors.lastname?.message}
+          placeholder="Enter your last name"
+        />
+        <InputField
+          label="Email"
+          icon={<FaEnvelope className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("email")}
+          error={errors.email?.message}
+          placeholder="your.email@example.com"
+          colSpan={2}
+        />
+      </motion.div>
+    )}
 
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
-                      <FaShieldAlt />
-                      Password Requirements
-                    </h4>
-                    <ul className="text-sm text-blue-700 space-y-1">
-                      <li className={watchedPassword.length >= 8 ? "text-green-600" : ""}>
-                        • At least 8 characters long
-                      </li>
-                      <li className={/[a-z]/.test(watchedPassword) ? "text-green-600" : ""}>
-                        • One lowercase letter
-                      </li>
-                      <li className={/[A-Z]/.test(watchedPassword) ? "text-green-600" : ""}>
-                        • One uppercase letter
-                      </li>
-                      <li className={/[0-9]/.test(watchedPassword) ? "text-green-600" : ""}>
-                        • One number
-                      </li>
-                      <li className={/[!@#$%^&*]/.test(watchedPassword) ? "text-green-600" : ""}>
-                        • One special character
-                      </li>
-                    </ul>
-                  </div>
-                </motion.div>
-              )}
-
-              {currentStep === 3 && (
-                <motion.div
-                  key="step3"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                >
-                  <InputField
-                    label="Contact Phone"
-                    icon={<FaPhone className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("contact_phone")}
-                    error={errors.contact_phone?.message}
-                    placeholder="+1 (555) 123-4567"
-                  />
-                  <InputField
-                    label="Address"
-                    icon={<FaHome className="h-5 w-5 text-gray-400" />}
-                    fieldProps={register("address")}
-                    error={errors.address?.message}
-                    placeholder="Your delivery address"
-                  />
-                  
-                  {/* Benefits Section */}
-                  <div className="md:col-span-2 bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
-                    <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
-                      <FaRocket className="text-green-600" />
-                      Welcome to NovaMart! Here's what you get:
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-green-700">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        Fast & Free Delivery
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        Exclusive Member Deals
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        24/7 Customer Support
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        Easy Returns & Refunds
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+    {currentStep === 2 && (
+      <motion.div
+        key="step2"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="space-y-6"
+      >
+        <div>
+          <InputField
+            label="Password"
+            type={showPassword ? "text" : "password"}
+            icon={<FaLock className="h-5 w-5 text-gray-400" />}
+            fieldProps={register("password")}
+            error={errors.password?.message}
+            placeholder="Create a strong password"
+            trailingIcon={
               <button
                 type="button"
-                onClick={handleBack}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
-                  currentStep === 1
-                    ? "invisible"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
-                Back
+                {showPassword ? (
+                  <FaEyeSlash className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <FaEye className="h-5 w-5 text-gray-400" />
+                )}
               </button>
+            }
+          />
+          <PasswordStrength password={watchedPassword} />
+        </div>
 
-              {currentStep < 3 ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
-                >
-                  Continue
-                </button>
+        <InputField
+          label="Confirm Password"
+          type={showConfirmPassword ? "text" : "password"}
+          icon={<FaShieldAlt className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("confirmPassword")}
+          error={errors.confirmPassword?.message}
+          placeholder="Confirm your password"
+          trailingIcon={
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              {showConfirmPassword ? (
+                <FaEyeSlash className="h-5 w-5 text-gray-400" />
               ) : (
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <FaSpinner className="animate-spin" />
-                      Creating Account...
-                    </>
-                  ) : (
-                    <>
-                      <FaRocket />
-                      Complete Registration
-                    </>
-                  )}
-                </button>
+                <FaEye className="h-5 w-5 text-gray-400" />
               )}
+            </button>
+          }
+        />
+
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+            <FaShieldAlt />
+            Password Requirements
+          </h4>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li className={watchedPassword.length >= 8 ? "text-green-600" : ""}>
+              • At least 8 characters long
+            </li>
+            <li className={/[a-z]/.test(watchedPassword) ? "text-green-600" : ""}>
+              • One lowercase letter
+            </li>
+            <li className={/[A-Z]/.test(watchedPassword) ? "text-green-600" : ""}>
+              • One uppercase letter
+            </li>
+            <li className={/[0-9]/.test(watchedPassword) ? "text-green-600" : ""}>
+              • One number
+            </li>
+            <li className={/[!@#$%^&*]/.test(watchedPassword) ? "text-green-600" : ""}>
+              • One special character
+            </li>
+          </ul>
+        </div>
+      </motion.div>
+    )}
+
+    {currentStep === 3 && (
+      <motion.div
+        key="step3"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <InputField
+          label="Contact Phone"
+          icon={<FaPhone className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("contact_phone")}
+          error={errors.contact_phone?.message}
+          placeholder="+1 (555) 123-4567"
+        />
+        <InputField
+          label="Address"
+          icon={<FaHome className="h-5 w-5 text-gray-400" />}
+          fieldProps={register("address")}
+          error={errors.address?.message}
+          placeholder="Your delivery address"
+        />
+
+        <div className="md:col-span-2 bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
+          <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
+            <FaRocket className="text-green-600" />
+            Welcome to NovaMart! Here's what you get:
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-green-700">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Fast & Free Delivery
             </div>
-          </form>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Exclusive Member Deals
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              24/7 Customer Support
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Easy Returns & Refunds
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  {/* Navigation Buttons */}
+  <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+    <button
+      type="button"
+      onClick={handleBack}
+      className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+        currentStep === 1
+          ? "invisible"
+          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+      }`}
+    >
+      Back
+    </button>
+
+    <button
+      type="submit"
+      disabled={isLoading}
+      className={`px-8 py-3 font-semibold rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2
+        ${
+          currentStep < 3
+            ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+            : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+        }`}
+    >
+      {isLoading && currentStep === 3 ? (
+        <>
+          <FaSpinner className="animate-spin" />
+          Creating Account...
+        </>
+      ) : currentStep < 3 ? (
+        "Continue"
+      ) : (
+        <>
+          <FaRocket />
+          Complete Registration
+        </>
+      )}
+    </button>
+  </div>
+</form>
+
 
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Already have an account?{" "}
               <Link
-                to="/auth/login"
+                to="/login"
                 className="text-indigo-600 hover:text-indigo-700 font-semibold hover:underline transition-colors duration-200"
               >
                 Sign in here

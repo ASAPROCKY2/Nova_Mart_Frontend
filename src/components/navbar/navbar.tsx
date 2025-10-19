@@ -1,88 +1,89 @@
+// src/components/navbar/Navbar.tsx
 import { NavLink } from "react-router-dom";
-import { Search, User, ShoppingCart } from "lucide-react";
+import { Search, ShoppingCart, User } from "lucide-react";
 import logo from "../../assets/images/novamart-logo.png";
 
 const Navbar = () => {
-  const activeStyle =
-    "text-green-700 font-semibold border-b-2 border-green-700 transition-all";
+  const activeStyle = "bg-white/20 rounded-md font-bold";
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-md px-6 md:px-10 py-3 border-b border-green-100">
-      {/* 🛍 Left - Logo + Brand */}
-      <div className="flex items-center justify-between max-w-7xl mx-auto">
+    <nav className="fixed top-0 left-0 w-full bg-green-700 text-white shadow-md px-4 md:px-8 py-3 z-50 backdrop-blur-md">
+      {/* Left: Logo and Brand */}
+      <div className="flex items-center justify-between w-full">
         {/* Logo */}
         <div className="flex items-center gap-3 cursor-pointer select-none">
           <img
             src={logo}
             alt="NovaMart Logo"
-            className="h-10 w-10 rounded-full shadow-sm border border-green-200"
+            className="h-12 w-12 rounded-full border-2 border-white shadow-sm"
           />
           <div>
-            <h1 className="text-xl md:text-2xl font-extrabold text-green-700 tracking-tight">
-              NovaMart
-            </h1>
-            <p className="text-xs text-green-600 -mt-1">Shop • Save • Smile</p>
+            <h1 className="text-xl font-bold">NovaMart</h1>
+            <p className="text-xs opacity-80">Wholesale & Retail Hub</p>
           </div>
         </div>
 
-        {/* 🌐 Center - Navigation Links */}
-        <ul className="hidden lg:flex gap-8 text-[16px] font-medium text-gray-700">
-          {[
-            { path: "/", label: "Home" },
-            { path: "/shop", label: "Shop" },
-            { path: "/about", label: "About" },
-            { path: "/contact", label: "Contact" },
-          ].map((link) => (
-            <li key={link.path}>
-              <NavLink
-                to={link.path}
-                className={({ isActive }) =>
-                  isActive
-                    ? activeStyle
-                    : "hover:text-green-700 transition-colors duration-200"
-                }
-              >
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        {/* Center: Desktop Navigation */}
+        <div className="hidden lg:flex flex-1 justify-center">
+          <ul className="menu menu-horizontal gap-2 text-base font-medium">
+            {[
+              { path: "/", label: "Home" },
+              { path: "/shop", label: "Shop" },
+              { path: "/about", label: "About" },
+              { path: "/contact", label: "Contact" },
+            ].map((link) => (
+              <li key={link.path}>
+                <NavLink
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `px-4 py-2 hover:bg-white/10 rounded-md transition-colors duration-200 ${
+                      isActive ? activeStyle : ""
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {/* 🔧 Right - Icons + Auth Buttons */}
-        <div className="hidden lg:flex items-center gap-4">
-          <button className="btn btn-ghost btn-circle text-gray-600 hover:text-green-700">
-            <Search className="w-5 h-5" />
+        {/* Right: Icons and Buttons */}
+        <div className="flex-none gap-3 hidden lg:flex items-center">
+          {/* Search */}
+          <button className="btn btn-ghost btn-circle text-white hover:bg-white/20 transition-all duration-200">
+            <Search className="h-5 w-5" />
           </button>
 
-          <button className="btn btn-ghost btn-circle text-gray-600 hover:text-green-700 relative">
-            <ShoppingCart className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 bg-green-700 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-              2
+          {/* Cart */}
+          <button className="btn btn-ghost btn-circle text-white hover:bg-white/20 transition-all duration-200 relative">
+            <ShoppingCart className="h-5 w-5" />
+            <span className="absolute -top-1 -right-1 bg-white text-green-700 text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+              3
             </span>
           </button>
 
+          {/* Login */}
           <NavLink
             to="/login"
-            className="btn bg-green-700 text-white border-none font-medium hover:bg-green-800 transition-all duration-200"
+            className="px-4 py-2 rounded-full border border-white/30 hover:bg-white hover:text-green-700 transition-all duration-200 font-semibold flex items-center gap-1"
           >
-            <User className="w-4 h-4 mr-1" /> Login
+            <User className="w-4 h-4" /> Login
           </NavLink>
 
+          {/* Register */}
           <NavLink
             to="/register"
-            className="btn btn-outline border-green-700 text-green-700 font-medium hover:bg-green-700 hover:text-white transition-all duration-200"
+            className="px-4 py-2 rounded-full bg-white text-green-700 font-semibold hover:bg-gray-100 transition-all duration-200"
           >
             Register
           </NavLink>
         </div>
 
-        {/* 📱 Mobile Menu */}
-        <div className="lg:hidden">
+        {/* Mobile Dropdown */}
+        <div className="flex-none lg:hidden">
           <div className="dropdown dropdown-end">
-            <label
-              tabIndex={0}
-              className="btn btn-ghost btn-circle text-gray-700"
-            >
+            <label tabIndex={0} className="btn btn-ghost btn-circle">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"
@@ -101,7 +102,7 @@ const Navbar = () => {
 
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-4 shadow-lg bg-white rounded-box w-56 text-gray-700"
+              className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-green-700 rounded-box w-64 text-white"
             >
               {[
                 { path: "/", label: "Home" },
@@ -113,9 +114,11 @@ const Navbar = () => {
                   <NavLink
                     to={link.path}
                     className={({ isActive }) =>
-                      isActive
-                        ? "text-green-700 font-semibold"
-                        : "hover:text-green-700"
+                      `text-lg py-3 ${
+                        isActive
+                          ? "bg-white/20 rounded-md font-bold"
+                          : "hover:bg-white/10 transition-all"
+                      }`
                     }
                   >
                     {link.label}
@@ -123,12 +126,12 @@ const Navbar = () => {
                 </li>
               ))}
 
-              <div className="divider my-2" />
+              <div className="divider my-1"></div>
 
               <li>
                 <NavLink
                   to="/login"
-                  className="block py-2 text-center rounded-lg bg-green-700 text-white font-semibold hover:bg-green-800 transition-all duration-200"
+                  className="block rounded-full border border-white/30 text-center py-2 mt-2 hover:bg-white hover:text-green-700 transition-all duration-200"
                 >
                   Login
                 </NavLink>
@@ -136,7 +139,7 @@ const Navbar = () => {
               <li>
                 <NavLink
                   to="/register"
-                  className="block py-2 text-center rounded-lg border border-green-700 text-green-700 font-semibold hover:bg-green-700 hover:text-white transition-all duration-200"
+                  className="block rounded-full bg-white text-green-700 text-center font-semibold py-2 mt-2 hover:bg-gray-100 transition-all duration-200"
                 >
                   Register
                 </NavLink>

@@ -7,7 +7,8 @@ import LandingPage from "./pages/landingpage";
 import Register from "./pages/auth/register";
 import VerifyUser from "./pages/auth/VerifyUser";
 import Login from "./pages/auth/login";
-import AboutPage from "./pages/AboutPage"; // ✅ Added About Page route
+import AboutPage from "./pages/AboutPage"; // ✅ About Page
+import ContactPage from "./pages/ContactPage"; // ✅ Contact Page (new)
 
 function App() {
   return (
@@ -17,11 +18,12 @@ function App() {
           {/* ===== PUBLIC ROUTES ===== */}
           <Route path="/" element={<LandingPage />} /> {/* 🏠 NovaMart Landing Page */}
           <Route path="/about" element={<AboutPage />} /> {/* 🧾 About Page */}
+          <Route path="/contact" element={<ContactPage />} /> {/* 📞 Contact Page */}
           <Route path="/register" element={<Register />} />
           <Route path="/verify" element={<VerifyUser />} />
           <Route path="/login" element={<Login />} />
 
-          {/* 🚀 Future protected routes (add later):
+          {/* 🚀 Future protected routes (add later)
               <Route path="/shop" element={<ShopDashboard />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} /> 
           */}
